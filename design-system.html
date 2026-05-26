@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Unified Design System — Agenciflow × Finex</title>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CSS SOURCES — Agenciflow (Webflow)
+       ═══════════════════════════════════════════════════════════ -->
+  <link href="agenciflow-studio.webflow.io (2)/assets/8645e400a2e0dc17_agenciflow-studio.webflow.shar.css" rel="stylesheet" type="text/css"/>
+  <link href="agenciflow-studio.webflow.io (2)/assets/464881517a387f36_css.css" media="all" rel="stylesheet"/>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CSS SOURCES — Finex (Tailwind + Google Fonts)
+       ═══════════════════════════════════════════════════════════ -->
+  <script src="finex-finance-saas.aura.build/assets/176e894661aa9cdc_3.4.17"></script>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="finex-finance-saas.aura.build/assets/71de0c11c987f278_css2.css" rel="stylesheet"/>
+  <link href="finex-finance-saas.aura.build/assets/ab7ed01ed5bd637b_css2.css" rel="stylesheet"/>
+  <link href="finex-finance-saas.aura.build/assets/5a95981dedcc5760_css2.css" rel="stylesheet"/>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       JS SOURCES — Agenciflow (GSAP, ScrollTrigger, Lenis)
+       ═══════════════════════════════════════════════════════════ -->
+  <script src="agenciflow-studio.webflow.io (2)/assets/28033e449a31ebcc_gsap.min.js"></script>
+  <script src="agenciflow-studio.webflow.io (2)/assets/ad33c2df9ada8a66_ScrollTrigger.min.js"></script>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       JS SOURCES — Finex (Lucide icons)
+       ═══════════════════════════════════════════════════════════ -->
+  <script src="finex-finance-saas.aura.build/assets/3fb12af853a359d4_lucide.min.js"></script>
+
+  <!-- Finex font classes -->
+  <style>
+    .font-oswald { font-family: 'Oswald', sans-serif !important; }
+    .font-newsreader { font-family: 'Newsreader', serif !important; }
+    .font-cormorant { font-family: 'Cormorant Garamond', serif !important; }
+  </style>
+
+  <!-- Finex Animations -->
+  <style>
+    @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes blurIn { 0% { opacity: 0; filter: blur(15px); transform: scale(0.95); } 100% { opacity: 1; filter: blur(0); transform: scale(1); } }
+    .scroll-item { animation-duration: 0.8s; animation-fill-mode: both; animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .scroll-fade-up { animation-name: fadeInUp; }
+    .scroll-blur-in { animation-name: blurIn; }
+    .delay-100 { animation-delay: 100ms; }
+    .delay-200 { animation-delay: 200ms; }
+    .delay-300 { animation-delay: 300ms; }
+    .delay-500 { animation-delay: 500ms; }
+
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .animate-marquee { animation: marquee 25s linear infinite; }
+
+    @keyframes draw-path-loop {
+      0% { stroke-dashoffset: 1000; opacity: 0; }
+      5% { opacity: 1; }
+      40% { stroke-dashoffset: 0; }
+      90% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+    @keyframes width-grow-loop {
+      0% { width: 0; opacity: 1; }
+      40% { width: var(--target-width); }
+      90% { width: var(--target-width); opacity: 1; }
+      100% { width: var(--target-width); opacity: 0; }
+    }
+    @keyframes fade-in-up-loop {
+      0% { opacity: 0; transform: translateY(10px); }
+      20% { opacity: 1; transform: translateY(0); }
+      90% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(0); }
+    }
+    @keyframes scale-in-loop {
+      0% { transform: scale(0.8); opacity: 0; }
+      20% { transform: scale(1); opacity: 1; }
+      90% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes spin-slow-reverse { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+
+    .animate-draw { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw-path-loop 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+    .animate-width { width: 0; animation: width-grow-loop 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+    .animate-fade-up { opacity: 0; animation: fade-in-up-loop 6s ease-out infinite; }
+    .animate-scale { opacity: 0; animation: scale-in-loop 6s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; }
+
+    .in-view .animate-draw,
+    .in-view .animate-width,
+    .in-view .animate-fade-up,
+    .in-view .animate-scale { animation-play-state: running; }
+  </style>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DESIGN SYSTEM NAV + PAGE CHROME
+       ═══════════════════════════════════════════════════════════ -->
+  <style>
+    ::-webkit-scrollbar { display: none; }
+    body { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Design System Nav */
+    .ds-nav {
+      position: sticky; top: 0; z-index: 9999;
+      display: flex; align-items: center; gap: 0;
+      background: rgba(5,5,5,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 0 2rem;
+      height: 56px;
+      overflow-x: auto;
+    }
+    .ds-nav a {
+      padding: 0 1rem; height: 56px; display: flex; align-items: center;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.5); text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .ds-nav a:hover { color: #fff; border-bottom-color: rgba(255,255,255,0.3); }
+    .ds-nav .ds-brand {
+      font-weight: 700; font-size: 14px; color: #fff;
+      margin-right: 1.5rem; letter-spacing: -0.02em;
+      border-bottom: none;
+    }
+    .ds-nav .ds-brand:hover { color: #fff; }
+
+    /* Section wrappers */
+    .ds-section {
+      padding: 6rem 2rem; max-width: 1400px; margin: 0 auto;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .ds-section:last-child { border-bottom: none; }
+    .ds-section-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.15em; color: rgba(255,255,255,0.35);
+      margin-bottom: 0.5rem;
+    }
+    .ds-section-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 3rem; font-weight: 300; color: #fff;
+      letter-spacing: -0.02em; margin-bottom: 1rem;
+    }
+    .ds-section-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem; font-weight: 300; color: rgba(255,255,255,0.4);
+      max-width: 600px; line-height: 1.7; margin-bottom: 3rem;
+    }
+
+    /* Typography spec table */
+    .ds-type-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .ds-type-row:last-child { border-bottom: none; }
+    .ds-type-meta {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.3);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      min-width: 140px; flex-shrink: 0;
+    }
+    .ds-type-preview { flex: 1; padding: 0 2rem; }
+    .ds-type-spec {
+      font-family: 'Inter', monospace;
+      font-size: 12px; color: rgba(255,255,255,0.25);
+      text-align: right; min-width: 120px; flex-shrink: 0;
+    }
+
+    /* Color swatches */
+    .ds-color-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
+    }
+    .ds-color-card {
+      border-radius: 1rem; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .ds-color-swatch { height: 100px; width: 100%; }
+    .ds-color-info {
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.03);
+    }
+    .ds-color-name {
+      font-family: 'Inter', sans-serif; font-size: 13px;
+      font-weight: 500; color: #fff; margin-bottom: 0.25rem;
+    }
+    .ds-color-value {
+      font-family: 'Inter', monospace; font-size: 11px;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* Component showcase */
+    .ds-component-row {
+      display: flex; flex-wrap: wrap; gap: 1.5rem;
+      align-items: center; margin-bottom: 2rem;
+    }
+    .ds-component-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: rgba(255,255,255,0.3);
+      width: 100%; margin-bottom: 0.5rem;
+    }
+
+    /* Layout demo */
+    .ds-layout-demo {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 1.5rem; padding: 2rem;
+      margin-bottom: 2rem;
+      background: rgba(255,255,255,0.02);
+    }
+    .ds-layout-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: rgba(99,102,241,0.6);
+      margin-bottom: 1rem;
+    }
+
+    /* Motion gallery */
+    .ds-motion-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .ds-motion-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.5rem; padding: 2rem;
+      background: rgba(10,10,12,1); min-height: 200px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      overflow: hidden; position: relative;
+    }
+    .ds-motion-card-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600; color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .ds-motion-card-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; color: rgba(255,255,255,0.35);
+    }
+
+    /* Source badge */
+    .ds-source {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.25rem 0.65rem; border-radius: 9999px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .ds-source-agenciflow { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.2); }
+    .ds-source-finex { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+
+    /* Divider */
+    .ds-divider { margin: 3rem 0; border: none; border-top: 1px solid rgba(255,255,255,0.06); }
+
+    /* Sub-section */
+    .ds-subsection-title {
+      font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 600; color: #fff;
+      margin-bottom: 1rem; margin-top: 2rem;
+    }
+
+    /* Icon grid */
+    .ds-icon-grid {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+    }
+    .ds-icon-item {
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      padding: 1.25rem; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 0.75rem; min-width: 90px;
+      background: rgba(255,255,255,0.02);
+    }
+    .ds-icon-label {
+      font-family: 'Inter', sans-serif; font-size: 10px;
+      color: rgba(255,255,255,0.3); text-align: center;
+    }
+
+    /* Hero container for Agenciflow */
+    .ds-agenciflow-hero-wrap {
+      background: #0a0a0a;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body class="bg-[#050505] text-white" style="margin: 0;">
+
+<!-- ═══════════════════════════════════════════════════════════
+     STICKY NAVIGATION
+     ═══════════════════════════════════════════════════════════ -->
+<nav class="ds-nav">
+  <a class="ds-brand" href="#hero">◆ Design System</a>
+  <a href="#hero">Hero</a>
+  <a href="#typography">Typography</a>
+  <a href="#colors">Colors</a>
+  <a href="#components">Components</a>
+  <a href="#layout">Layout</a>
+  <a href="#motion">Motion</a>
+  <a href="#icons">Icons</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 0 — HERO (Adapted Text)
+     Clone of Finex Hero with text changed to present the design system
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="ds-section" id="hero" style="padding-top: 4rem; padding-bottom: 4rem;">
+  <div class="ds-section-label">Section 0</div>
+
+  <!-- ---- FINEX-STYLE HERO ---- -->
+  <div style="position: relative; overflow: hidden; border-radius: 2rem; border: 1px solid rgba(255,255,255,0.08); background: #050505; padding: 0;">
+    <!-- Background glow -->
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a2e] via-[#050505] to-[#050505]" style="z-index:0;"></div>
+    <div class="pointer-events-none absolute inset-0 opacity-20" style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 40px 40px; z-index: 0;"></div>
+
+    <div style="position: relative; z-index: 10; padding: 5rem 3rem; text-align: center;">
+      <!-- Badge -->
+      <div class="flex gap-3 items-center justify-center mb-8 scroll-item scroll-fade-up" style="animation-play-state: running;">
+        <span class="flex items-center justify-center text-[11px] font-medium text-blue-400 font-mono bg-blue-500/10 w-7 h-7 border-blue-500/20 border rounded-lg shadow-[0_0_10px_rgba(59,130,246,0.2)]">DS</span>
+        <span class="uppercase text-sm font-medium text-gray-500 tracking-widest font-sans">Unified Design System</span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-5xl md:text-7xl lg:text-8xl text-white font-oswald font-light tracking-tight leading-[1.05] mb-6 scroll-item scroll-fade-up delay-100" style="animation-play-state: running;">
+        Agenciflow × Finex
+        <span class="text-gray-600 font-oswald font-light tracking-tight block mt-2">Design System v2</span>
+      </h1>
+
+      <!-- Description -->
+      <p class="leading-relaxed text-lg font-light text-gray-400 max-w-2xl mx-auto mb-10 scroll-item scroll-fade-up delay-200" style="animation-play-state: running;">
+        A living pattern library aggregating the exact visual tokens, components,
+        animations, and layout patterns from both reference designs — no approximations.
+      </p>
+
+      <!-- CTA -->
+      <div class="flex gap-4 justify-center scroll-item scroll-fade-up delay-300" style="animation-play-state: running;">
+        <a class="group flex items-center gap-2 pl-6 pr-5 py-3 bg-white text-black rounded-full text-sm font-medium hover:bg-gray-200 transition-all duration-200 font-sans" href="#typography">
+          <span>Explore Tokens</span>
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="16"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a class="flex items-center gap-2 px-6 py-3 border border-white/10 rounded-full text-sm font-medium text-white hover:bg-white/5 transition-all duration-200 font-sans" href="#components">
+          View Components
+        </a>
+      </div>
+
+      <!-- Source badges -->
+      <div class="flex gap-3 justify-center mt-8">
+        <span class="ds-source ds-source-agenciflow">Agenciflow · Webflow</span>
+        <span class="ds-source ds-source-finex">Finex · Tailwind / Aura</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1 — TYPOGRAPHY
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="ds-section" id="typography">
+  <div class="ds-section-label">Section 1</div>
+  <div class="ds-section-title">Typography</div>
+  <div class="ds-section-desc">All type styles extracted from both reference HTML files. Each row shows the live preview using the original classes.</div>
+
+  <!-- AGENCIFLOW TYPOGRAPHY -->
+  <h3 class="ds-subsection-title"><span class="ds-source ds-source-agenciflow" style="margin-right:0.5rem;">A</span> Agenciflow — Inter / Inter Tight / Playfair Display</h3>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Hero Title</div>
+    <div class="ds-type-preview"><h1 class="hero_title" style="visibility: visible !important; font-size: clamp(3rem,8vw,7rem);">Agenciflow Studio</h1></div>
+    <div class="ds-type-spec">clamp(3rem,8vw,7rem)</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">About Title H2</div>
+    <div class="ds-type-preview"><h2 class="custom-heading-h3" style="font-size: 2.5rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.5);">OUR AGENCY EXISTS TO CREATE</h2></div>
+    <div class="ds-type-spec">~40px / uppercase</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Section Heading</div>
+    <div class="ds-type-preview"><h3 class="heading-h3" style="font-size:2rem; font-weight:600;">Services We Offer</h3></div>
+    <div class="ds-type-spec">~32px / 600</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Body Text</div>
+    <div class="ds-type-preview"><p class="about_text" style="font-size: 1.125rem; color: rgba(255,255,255,0.5); font-weight: 300; line-height: 1.7;">Design and build modern digital experiences with our creative studio.</p></div>
+    <div class="ds-type-spec">18px / 300 / 1.7</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Nav Link</div>
+    <div class="ds-type-preview"><a class="nav-link" href="#" style="font-size: 14px; color: rgba(255,255,255,0.7);">About</a></div>
+    <div class="ds-type-spec">14px / 400</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Outlined Text</div>
+    <div class="ds-type-preview"><span class="text_border-line" style="font-size: 2.5rem; -webkit-text-stroke: 1px rgba(255,255,255,0.5); color: transparent;">Studio</span></div>
+    <div class="ds-type-spec">stroke-text / outline</div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- FINEX TYPOGRAPHY -->
+  <h3 class="ds-subsection-title"><span class="ds-source ds-source-finex" style="margin-right:0.5rem;">F</span> Finex — Inter / Oswald</h3>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Display XL</div>
+    <div class="ds-type-preview"><h1 class="text-6xl font-oswald font-light tracking-tight text-white">Predictive Analytics</h1></div>
+    <div class="ds-type-spec">60px / Oswald 300</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Display L</div>
+    <div class="ds-type-preview"><h2 class="text-5xl font-oswald font-light tracking-tight text-white">Built for speed.</h2></div>
+    <div class="ds-type-spec">48px / Oswald 300</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Heading 3</div>
+    <div class="ds-type-preview"><h3 class="text-4xl font-light text-white tracking-tight font-oswald">ROI Prediction</h3></div>
+    <div class="ds-type-spec">36px / Oswald 300</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Heading 4</div>
+    <div class="ds-type-preview"><h4 class="text-2xl font-medium text-white tracking-tight">Instant Sync</h4></div>
+    <div class="ds-type-spec">24px / Inter 500</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Card Title</div>
+    <div class="ds-type-preview"><h3 class="text-xl font-semibold text-white tracking-tight font-sans">User Growth</h3></div>
+    <div class="ds-type-spec">20px / Inter 600</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Bold M</div>
+    <div class="ds-type-preview"><span class="text-sm font-medium text-white font-sans">Direct Traffic</span></div>
+    <div class="ds-type-spec">14px / Inter 500</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Body Large</div>
+    <div class="ds-type-preview"><p class="text-lg font-light text-gray-400 leading-relaxed">Leverage AI-driven insights to forecast trends, optimize spending.</p></div>
+    <div class="ds-type-spec">18px / Inter 300 / relaxed</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Body Regular</div>
+    <div class="ds-type-preview"><p class="text-[15px] text-gray-400 leading-relaxed font-light font-sans">Link your accounts in seconds for a unified view.</p></div>
+    <div class="ds-type-spec">15px / Inter 300</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Caption</div>
+    <div class="ds-type-preview"><p class="text-xs text-gray-500 font-medium uppercase tracking-widest font-sans">POWERED BY WORLD-CLASS TEAMS</p></div>
+    <div class="ds-type-spec">12px / 500 / uppercase</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Stat Number</div>
+    <div class="ds-type-preview"><span class="text-3xl font-light text-white tracking-tight font-oswald">$6,295.29</span></div>
+    <div class="ds-type-spec">30px / Oswald 300</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Muted Accent</div>
+    <div class="ds-type-preview"><span class="text-gray-600 font-oswald font-light tracking-tight text-4xl">for Modern Growth</span></div>
+    <div class="ds-type-spec">36px / Oswald / gray-600</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Blockquote</div>
+    <div class="ds-type-preview"><blockquote class="text-2xl font-light text-white font-oswald leading-tight">"This app is incredible and changed everything."</blockquote></div>
+    <div class="ds-type-spec">24px / Oswald 300</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Mono Badge</div>
+    <div class="ds-type-preview"><span class="text-[11px] font-medium text-blue-400 font-mono">01</span></div>
+    <div class="ds-type-spec">11px / mono / 500</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">Price Display</div>
+    <div class="ds-type-preview"><span class="text-7xl font-light text-white tracking-tight font-oswald">$19</span></div>
+    <div class="ds-type-spec">72px / Oswald 300</div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 2 — COLORS & SURFACES
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="ds-section" id="colors">
+  <div class="ds-section-label">Section 2</div>
+  <div class="ds-section-title">Colors & Surfaces</div>
+  <div class="ds-section-desc">All background, text, border, and gradient colors extracted from both reference designs.</div>
+
+  <!-- BACKGROUNDS -->
+  <h3 class="ds-subsection-title">Backgrounds</h3>
+  <div class="ds-color-grid">
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #050505;"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Page BG (Finex)</div><div class="ds-color-value">#050505</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #0A0A0C;"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Card BG (Finex)</div><div class="ds-color-value">#0A0A0C</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #0A0A0A;"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Page BG (Agenciflow)</div><div class="ds-color-value">#0A0A0A</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #101018;"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Chart Panel</div><div class="ds-color-value">#101018</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #121215;"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Mobile Card</div><div class="ds-color-value">#121215</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #1A1A24;"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Tooltip BG</div><div class="ds-color-value">#1A1A24</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #1A1A1A;"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Icon Container</div><div class="ds-color-value">#1A1A1A</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #1E1E22;"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Asset Icon BG</div><div class="ds-color-value">#1E1E22</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #111111;"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Toggle BG</div><div class="ds-color-value">#111111</div></div>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- ACCENT COLORS -->
+  <h3 class="ds-subsection-title">Accent Colors</h3>
+  <div class="ds-color-grid">
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #3b82f6;"></div><div class="ds-color-info"><div class="ds-color-name">Blue 500</div><div class="ds-color-value">#3b82f6</div></div></div>
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #2563eb;"></div><div class="ds-color-info"><div class="ds-color-name">Blue 600</div><div class="ds-color-value">#2563eb</div></div></div>
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #6366f1;"></div><div class="ds-color-info"><div class="ds-color-name">Indigo 500</div><div class="ds-color-value">#6366f1</div></div></div>
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #a855f7;"></div><div class="ds-color-info"><div class="ds-color-name">Purple 500</div><div class="ds-color-value">#a855f7</div></div></div>
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #d946ef;"></div><div class="ds-color-info"><div class="ds-color-name">Fuchsia 500</div><div class="ds-color-value">#d946ef</div></div></div>
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #22d3ee;"></div><div class="ds-color-info"><div class="ds-color-name">Cyan 400</div><div class="ds-color-value">#22d3ee</div></div></div>
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #10b981;"></div><div class="ds-color-info"><div class="ds-color-name">Emerald 500</div><div class="ds-color-value">#10b981</div></div></div>
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #22c55e;"></div><div class="ds-color-info"><div class="ds-color-name">Green 500</div><div class="ds-color-value">#22c55e</div></div></div>
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #f97316;"></div><div class="ds-color-info"><div class="ds-color-name">Orange 500</div><div class="ds-color-value">#f97316</div></div></div>
+    <div class="ds-color-card"><div class="ds-color-swatch" style="background: #f87171;"></div><div class="ds-color-info"><div class="ds-color-name">Red 400</div><div class="ds-color-value">#f87171</div></div></div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- GRADIENTS -->
+  <h3 class="ds-subsection-title">Gradients</h3>
+  <div class="ds-color-grid">
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: linear-gradient(to bottom right, #4f46e5, #4338ca);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Indigo Card (Finex)</div><div class="ds-color-value">indigo-600 → indigo-700</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: linear-gradient(to top right, #a855f7, #6366f1);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Transfer Icon</div><div class="ds-color-value">purple-500 → indigo-500</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: linear-gradient(to bottom right, #f97316, #dc2626);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Direct Traffic</div><div class="ds-color-value">orange-500 → red-600</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: linear-gradient(to bottom right, #3b82f6, #6366f1);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Social Media</div><div class="ds-color-value">blue-500 → indigo-600</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: linear-gradient(to bottom right, #a855f7, #ec4899);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Newsletter</div><div class="ds-color-value">purple-500 → pink-600</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: linear-gradient(to right, #2563eb, #06b6d4);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Conversion Line</div><div class="ds-color-value">blue-600 → cyan-400</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: radial-gradient(ellipse at top, #1a1a2e, #0A0A0C, #0A0A0C);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Card Radial BG</div><div class="ds-color-value">radial-gradient ellipse at top</div></div>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- BORDERS & SURFACES -->
+  <h3 class="ds-subsection-title">Borders & Surfaces</h3>
+  <div class="ds-color-grid">
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #050505; border: 1px solid rgba(255,255,255,0.1);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Default Border</div><div class="ds-color-value">white/10</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: #050505; border: 1px solid rgba(255,255,255,0.05);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Subtle Border</div><div class="ds-color-value">white/5</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: rgba(255,255,255,0.05);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Surface Glass</div><div class="ds-color-value">white/[0.05]</div></div>
+    </div>
+    <div class="ds-color-card">
+      <div class="ds-color-swatch" style="background: rgba(255,255,255,0.03);"></div>
+      <div class="ds-color-info"><div class="ds-color-name">Hover Overlay</div><div class="ds-color-value">white/[0.03]</div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3 — UI COMPONENTS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="ds-section" id="components">
+  <div class="ds-section-label">Section 3</div>
+  <div class="ds-section-title">UI Components</div>
+  <div class="ds-section-desc">Buttons, inputs, cards, badges, and interactive elements from both references.</div>
+
+  <!-- BUTTONS -->
+  <h3 class="ds-subsection-title">Buttons</h3>
+
+  <div class="ds-component-label"><span class="ds-source ds-source-finex" style="margin-right:0.5rem;">F</span> Finex Buttons</div>
+  <div class="ds-component-row">
+    <!-- Primary CTA -->
+    <button class="group flex items-center gap-2 pl-6 pr-5 py-3 bg-white text-black rounded-full text-sm font-medium hover:bg-gray-200 transition-all duration-200 font-sans">
+      <span>Explore Features</span>
+      <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="16"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+
+    <!-- Ghost/Outline CTA -->
+    <button class="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 pl-4 pr-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-white font-sans">
+      All Projects
+      <svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="14"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+
+    <!-- Send Button -->
+    <button class="px-4 py-1.5 bg-white text-black text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors">Send</button>
+
+    <!-- Pricing CTA -->
+    <button class="hover:bg-blue-500/10 hover:border-blue-400 hover:shadow-[0_0_35px_rgba(59,130,246,0.6),inset_0_0_20px_rgba(59,130,246,0.4)] hover:scale-[1.02] transition-all duration-300 flex group text-base font-medium text-white bg-black/60 border-blue-500 border rounded-full pt-3.5 pr-8 pb-3.5 pl-8 shadow-[0_0_20px_rgba(59,130,246,0.5),inset_0_0_10px_rgba(59,130,246,0.2)] gap-x-2 gap-y-2 items-center justify-center">
+      Start For Free
+    </button>
+
+    <!-- Pricing Toggle -->
+    <div class="flex bg-[#111111] border-white/10 border rounded-full p-1.5 backdrop-blur-sm items-center">
+      <button class="text-sm font-semibold text-black bg-[#ffffff] rounded-full px-8 py-2.5 shadow-[0_0_15px_rgba(14,165,233,0.3)]">Monthly</button>
+      <button class="px-8 py-2.5 rounded-full text-gray-400 hover:text-white font-medium text-sm transition-colors font-sans">Yearly</button>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- BADGES & TAGS -->
+  <h3 class="ds-subsection-title">Badges & Tags</h3>
+  <div class="ds-component-row">
+    <!-- Emerald Badge -->
+    <span class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[11px] font-medium border border-emerald-500/20 flex items-center gap-1">
+      <svg fill="none" height="12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="12"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> 12.5%
+    </span>
+
+    <!-- Neutral Badge -->
+    <span class="px-1.5 py-0.5 rounded bg-white/5 text-gray-300 text-[11px] font-medium border border-white/10 flex items-center gap-1">+2.1%</span>
+
+    <!-- Green Badge -->
+    <div class="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+      <svg class="text-green-400" fill="none" height="10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24" width="10"><path d="m18 15-6-6-6 6"/></svg>
+      <span class="text-[10px] font-semibold text-green-400">+12.5%</span>
+    </div>
+
+    <!-- Active Badge -->
+    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded border border-white/10 backdrop-blur-md text-white">Active</span>
+
+    <!-- Section Number -->
+    <span class="flex items-center justify-center text-[11px] font-medium text-blue-400 font-mono bg-blue-500/10 w-7 h-7 border-blue-500/20 border rounded-lg shadow-[0_0_10px_rgba(59,130,246,0.2)]">01</span>
+
+    <!-- Live Indicator -->
+    <div class="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+      <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)] animate-pulse"></div>
+      <span class="text-[11px] font-medium text-gray-300 font-sans">+24% vs last month</span>
+    </div>
+
+    <!-- System Status -->
+    <div class="flex items-center gap-2">
+      <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+      <span class="text-xs text-gray-400 font-sans">All systems normal</span>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- INPUTS -->
+  <h3 class="ds-subsection-title">Inputs</h3>
+  <div class="ds-component-row">
+    <div class="relative">
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
+      <input class="w-32 bg-[#111] border border-white/10 rounded-lg py-1.5 pl-6 pr-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" type="text" value="0.00"/>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- CARDS -->
+  <h3 class="ds-subsection-title">Cards</h3>
+
+  <div class="ds-component-label"><span class="ds-source ds-source-finex" style="margin-right:0.5rem;">F</span> Finex Stat Card</div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div class="p-5 rounded-xl bg-[#0A0A0C] border border-white/10 shadow-lg relative group overflow-hidden hover:border-white/20 transition-all">
+      <p class="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1">Total Balance</p>
+      <h3 class="text-2xl font-semibold text-white tracking-tight mb-2 font-oswald">$124,500.20</h3>
+      <div class="flex items-center gap-2">
+        <span class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[11px] font-medium border border-emerald-500/20 flex items-center gap-1">
+          <svg fill="none" height="12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="12"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> 12.5%
+        </span>
+        <span class="text-[11px] text-gray-600">vs last month</span>
+      </div>
+    </div>
+
+    <div class="p-5 rounded-xl bg-[#0A0A0C] border border-white/10 shadow-lg relative group overflow-hidden hover:border-white/20 transition-all">
+      <p class="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1">Monthly Spend</p>
+      <h3 class="text-2xl font-semibold text-white tracking-tight mb-2 font-oswald">$8,240.50</h3>
+      <div class="flex items-center gap-2">
+        <span class="px-1.5 py-0.5 rounded bg-white/5 text-gray-300 text-[11px] font-medium border border-white/10">+2.1%</span>
+        <span class="text-[11px] text-gray-600">vs last month</span>
+      </div>
+    </div>
+
+    <div class="overflow-hidden group cursor-pointer text-white bg-gradient-to-br from-indigo-600 to-indigo-700 border-blue-500/30 border rounded-xl p-5 relative shadow-lg">
+      <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
+      <div class="relative z-10 flex flex-col h-full justify-between">
+        <div class="flex justify-between items-start">
+          <div><p class="text-[10px] font-medium text-indigo-200 uppercase tracking-wider mb-1">Active Card</p><h3 class="text-xl font-medium tracking-tight">Visa Infinite</h3></div>
+        </div>
+        <div class="flex items-end justify-between mt-2">
+          <span class="font-mono text-sm tracking-widest opacity-80">•••• 4242</span>
+          <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded border border-white/10 backdrop-blur-md">Active</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ds-component-label"><span class="ds-source ds-source-finex" style="margin-right:0.5rem;">F</span> Finex Feature Card</div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+    <div class="md:p-12 transition-colors group overflow-hidden z-0 bg-[#0A0A0C] border-[#ffffff]/10 border rounded-3xl p-8 relative">
+      <div class="pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a2e] via-[#0A0A0C] to-[#0A0A0C] absolute inset-0 z-0"></div>
+      <div class="absolute inset-0 opacity-20 z-0" style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 40px 40px;"></div>
+      <div class="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
+      <div class="flex gap-6 items-start relative z-20">
+        <div class="w-12 h-12 rounded-xl bg-[#1A1A1A] border border-white/10 flex items-center justify-center shrink-0 group-hover:border-white/20 transition-colors">
+          <svg class="text-gray-300 group-hover:text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <div>
+          <h3 class="text-2xl font-medium text-white tracking-tight mb-2">Instant Sync</h3>
+          <p class="text-[15px] leading-relaxed font-light text-gray-400">Link your accounts in seconds for a unified view of your net worth.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="md:p-12 transition-colors group overflow-hidden z-0 bg-[#0A0A0C] border-[#ffffff]/10 border rounded-3xl p-8 relative">
+      <div class="pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a2e] via-[#0A0A0C] to-[#0A0A0C] absolute inset-0 z-0"></div>
+      <div class="absolute inset-0 opacity-20 z-0" style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 40px 40px;"></div>
+      <div class="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
+      <div class="flex gap-6 items-start relative z-20">
+        <div class="w-12 h-12 rounded-xl bg-[#1A1A1A] border border-white/10 flex items-center justify-center shrink-0 group-hover:border-white/20 transition-colors">
+          <svg class="text-gray-300 group-hover:text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <div>
+          <h3 class="text-2xl font-medium text-white tracking-tight mb-2">Bank-Grade Security</h3>
+          <p class="text-[15px] text-gray-400 leading-relaxed font-light">We use 256-bit encryption and never store your banking credentials.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- AVATARS & CONTACTS -->
+  <h3 class="ds-subsection-title">Avatars & Contact Group</h3>
+  <div class="ds-component-row">
+    <div class="flex -space-x-3 shrink-0">
+      <img alt="Contact" class="w-9 h-9 rounded-full border-2 border-[#0A0A0C] cursor-pointer hover:z-10 hover:scale-110 transition-transform" src="finex-finance-saas.aura.build/assets/1d6e205d649b16f6_photo-1494790108377-be9c29b293.jpg"/>
+      <img alt="Contact" class="w-9 h-9 rounded-full border-2 border-[#0A0A0C] cursor-pointer hover:z-10 hover:scale-110 transition-transform" src="finex-finance-saas.aura.build/assets/6f89e3ba2cba506e_photo-1599566150163-29194dcaad.jpg"/>
+      <img alt="Contact" class="w-9 h-9 rounded-full border-2 border-[#0A0A0C] cursor-pointer hover:z-10 hover:scale-110 transition-transform" src="finex-finance-saas.aura.build/assets/646160d2d93be21b_photo-1535713875002-d1d0cf377f.jpg"/>
+      <div class="w-9 h-9 rounded-full border-2 border-[#0A0A0C] bg-white/10 flex items-center justify-center text-[10px] text-white font-medium cursor-pointer hover:bg-white/20 transition-colors z-0">+4</div>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- PROGRESS BARS -->
+  <h3 class="ds-subsection-title">Progress Bars</h3>
+  <div style="max-width: 500px;">
+    <div class="flex items-center gap-4 mb-4">
+      <span class="w-[110px] shrink-0 text-sm text-gray-300 font-medium font-sans">Direct</span>
+      <div class="h-3 flex-1 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full bg-[#d946ef]" style="width: 80%;"></div></div>
+      <span class="w-12 shrink-0 text-right text-sm text-white font-medium font-sans">80%</span>
+    </div>
+    <div class="flex items-center gap-4 mb-4">
+      <span class="w-[110px] shrink-0 text-sm text-gray-300 font-medium font-sans">Social</span>
+      <div class="h-3 flex-1 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full bg-[#22d3ee]" style="width: 60%;"></div></div>
+      <span class="w-12 shrink-0 text-right text-sm text-white font-medium font-sans">60%</span>
+    </div>
+    <div class="flex items-center gap-4 mb-4">
+      <span class="w-[110px] shrink-0 text-sm text-gray-300 font-medium font-sans">Organic</span>
+      <div class="h-3 flex-1 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full bg-[#6366f1]" style="width: 45%;"></div></div>
+      <span class="w-12 shrink-0 text-right text-sm text-white font-medium font-sans">45%</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="w-[110px] shrink-0 text-sm text-gray-300 font-medium font-sans">Referral</span>
+      <div class="h-3 flex-1 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full bg-[#f87171]" style="width: 30%;"></div></div>
+      <span class="w-12 shrink-0 text-right text-sm text-white font-medium font-sans">30%</span>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- THIN PROGRESS -->
+  <h3 class="ds-subsection-title">Thin Progress Bars</h3>
+  <div style="max-width: 500px;">
+    <div class="mb-3"><div class="w-full h-1 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-orange-500" style="width: 70%;"></div></div></div>
+    <div class="mb-3"><div class="w-full h-1 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-blue-500" style="width: 55%;"></div></div></div>
+    <div><div class="w-full h-1 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-purple-500" style="width: 30%;"></div></div></div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 4 — LAYOUT & SPACING
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="ds-section" id="layout">
+  <div class="ds-section-label">Section 4</div>
+  <div class="ds-section-title">Layout & Spacing</div>
+  <div class="ds-section-desc">Container widths, grid patterns, and section padding from both references.</div>
+
+  <!-- FINEX SECTION CONTAINER -->
+  <div class="ds-layout-demo">
+    <div class="ds-layout-label">Finex — Full-width Section Container (max-w-7xl / 1280px)</div>
+    <div class="flex flex-col bg-[#0A0A0C] border-[#ffffff]/10 border rounded-3xl p-8 gap-y-6">
+      <div class="flex flex-col gap-6 max-w-3xl">
+        <div class="flex gap-3 items-center">
+          <span class="flex items-center justify-center text-[11px] font-medium text-blue-400 font-mono bg-blue-500/10 w-7 h-7 border-blue-500/20 border rounded-lg shadow-[0_0_10px_rgba(59,130,246,0.2)]">01</span>
+          <span class="uppercase text-sm font-medium text-gray-500 tracking-widest font-sans">Section Label</span>
+        </div>
+        <h2 class="text-4xl text-white font-oswald font-light tracking-tight">
+          Section Title Here
+          <span class="text-gray-600 font-oswald font-light tracking-tight">with muted accent.</span>
+        </h2>
+        <p class="leading-relaxed text-lg font-light text-gray-400 max-w-xl">Description text uses text-lg, font-light, text-gray-400, max-w-xl constraint, and relaxed line-height.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINEX GRID LAYOUTS -->
+  <div class="ds-layout-demo">
+    <div class="ds-layout-label">Finex — 3-Column Stat Grid (md:grid-cols-3, gap-4)</div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="p-5 rounded-xl bg-[#0A0A0C] border border-white/10 h-24 flex items-center justify-center text-gray-500 text-sm font-sans">Col 1</div>
+      <div class="p-5 rounded-xl bg-[#0A0A0C] border border-white/10 h-24 flex items-center justify-center text-gray-500 text-sm font-sans">Col 2</div>
+      <div class="p-5 rounded-xl bg-[#0A0A0C] border border-white/10 h-24 flex items-center justify-center text-gray-500 text-sm font-sans">Col 3</div>
+    </div>
+  </div>
+
+  <div class="ds-layout-demo">
+    <div class="ds-layout-label">Finex — 2-Column Feature Grid (md:grid-cols-2, gap-4)</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="rounded-3xl bg-[#0A0A0C] border border-white/10 h-32 flex items-center justify-center text-gray-500 text-sm font-sans">Feature 1</div>
+      <div class="rounded-3xl bg-[#0A0A0C] border border-white/10 h-32 flex items-center justify-center text-gray-500 text-sm font-sans">Feature 2</div>
+    </div>
+  </div>
+
+  <div class="ds-layout-demo">
+    <div class="ds-layout-label">Finex — 8/4 Split (md:grid-cols-12, col-span-8 + col-span-4)</div>
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+      <div class="md:col-span-8 rounded-2xl bg-[#101018] border border-white/10 h-48 flex items-center justify-center text-gray-500 text-sm font-sans">Chart Area (8/12)</div>
+      <div class="md:col-span-4 rounded-2xl bg-[#101018] border border-white/10 h-48 flex items-center justify-center text-gray-500 text-sm font-sans">Sidebar (4/12)</div>
+    </div>
+  </div>
+
+  <!-- SPACING -->
+  <h3 class="ds-subsection-title">Spacing Tokens</h3>
+  <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 1rem;">
+    <div style="text-align: center;">
+      <div style="width: 16px; height: 16px; background: rgba(99,102,241,0.4); border-radius: 3px; margin: 0 auto 0.5rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono">gap-4 (1rem)</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 24px; height: 24px; background: rgba(99,102,241,0.4); border-radius: 3px; margin: 0 auto 0.5rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono">gap-6 (1.5rem)</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 32px; height: 32px; background: rgba(99,102,241,0.4); border-radius: 3px; margin: 0 auto 0.5rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono">gap-8 (2rem)</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(99,102,241,0.4); border-radius: 3px; margin: 0 auto 0.5rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono">gap-16 (4rem)</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 96px; height: 40px; background: rgba(99,102,241,0.4); border-radius: 3px; margin: 0 auto 0.5rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono">mt-24 (6rem)</span>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- BORDER RADII -->
+  <h3 class="ds-subsection-title">Border Radii</h3>
+  <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: end; margin-top: 1rem;">
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono mt-2 block">rounded (4px)</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono mt-2 block">rounded-lg (8px)</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.75rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono mt-2 block">rounded-xl (12px)</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono mt-2 block">rounded-2xl (16px)</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.5rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono mt-2 block">rounded-3xl (24px)</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 2rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono mt-2 block">rounded-[2rem]</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 3rem;"></div>
+      <span class="text-[11px] text-gray-500 font-mono mt-2 block">rounded-[3rem]</span>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 9999px;"></div>
+      <span class="text-[11px] text-gray-500 font-mono mt-2 block">rounded-full</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 5 — MOTION & INTERACTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="ds-section" id="motion">
+  <div class="ds-section-label">Section 5</div>
+  <div class="ds-section-title">Motion & Interaction</div>
+  <div class="ds-section-desc">All animation behaviors present in both reference designs.</div>
+
+  <div class="ds-motion-grid">
+    <!-- fadeInUp -->
+    <div class="ds-motion-card">
+      <div>
+        <div class="ds-motion-card-title">Scroll Fade Up <span class="ds-source ds-source-finex" style="margin-left:0.5rem; font-size:9px;">F</span></div>
+        <div class="ds-motion-card-desc">Elements fade in while translating up 30px. Used on sections, headings, cards.</div>
+      </div>
+      <div class="scroll-item scroll-fade-up mt-6" style="animation-play-state: running;">
+        <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-sm text-white font-sans">I animated in ✨</div>
+      </div>
+    </div>
+
+    <!-- blurIn -->
+    <div class="ds-motion-card">
+      <div>
+        <div class="ds-motion-card-title">Scroll Blur In <span class="ds-source ds-source-finex" style="margin-left:0.5rem; font-size:9px;">F</span></div>
+        <div class="ds-motion-card-desc">Elements blur in from scale(0.95). Used on testimonial cards and pricing.</div>
+      </div>
+      <div class="scroll-item scroll-blur-in delay-200 mt-6" style="animation-play-state: running;">
+        <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-sm text-white font-sans">Blur In Effect ◈</div>
+      </div>
+    </div>
+
+    <!-- Hover lift -->
+    <div class="ds-motion-card">
+      <div>
+        <div class="ds-motion-card-title">Hover Border Glow <span class="ds-source ds-source-finex" style="margin-left:0.5rem; font-size:9px;">F</span></div>
+        <div class="ds-motion-card-desc">Cards transition border from white/10 → white/20 on hover.</div>
+      </div>
+      <div class="mt-6 p-4 rounded-xl bg-[#0A0A0C] border border-white/10 hover:border-white/20 transition-all cursor-pointer text-sm text-gray-400 font-sans">
+        Hover me → border glows
+      </div>
+    </div>
+
+    <!-- Button hover -->
+    <div class="ds-motion-card">
+      <div>
+        <div class="ds-motion-card-title">Button Arrow Shift <span class="ds-source ds-source-finex" style="margin-left:0.5rem; font-size:9px;">F</span></div>
+        <div class="ds-motion-card-desc">Arrow icon translates 4px right on group hover.</div>
+      </div>
+      <div class="mt-6">
+        <button class="group flex items-center gap-2 pl-6 pr-5 py-3 bg-white text-black rounded-full text-sm font-medium hover:bg-gray-200 transition-all duration-200 font-sans">
+          <span>Hover Me</span>
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="16"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Marquee -->
+    <div class="ds-motion-card" style="overflow: hidden;">
+      <div>
+        <div class="ds-motion-card-title">Logo Marquee <span class="ds-source ds-source-finex" style="margin-left:0.5rem; font-size:9px;">F</span></div>
+        <div class="ds-motion-card-desc">Infinite horizontal scroll at 25s linear. Grayscale → color on hover.</div>
+      </div>
+      <div class="relative flex overflow-x-hidden mt-6">
+        <div class="animate-marquee whitespace-nowrap flex gap-8 items-center opacity-50 text-white">
+          <span class="text-lg font-semibold">ACME</span>
+          <span class="text-lg font-bold italic">Veridian</span>
+          <span class="text-lg font-black">KYBER</span>
+          <span class="text-lg font-medium">Lumina.ai</span>
+          <span class="text-lg font-semibold">ACME</span>
+          <span class="text-lg font-bold italic">Veridian</span>
+          <span class="text-lg font-black">KYBER</span>
+          <span class="text-lg font-medium">Lumina.ai</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avatar scale -->
+    <div class="ds-motion-card">
+      <div>
+        <div class="ds-motion-card-title">Avatar Scale on Hover <span class="ds-source ds-source-finex" style="margin-left:0.5rem; font-size:9px;">F</span></div>
+        <div class="ds-motion-card-desc">Contact avatars scale to 110% with z-index bump on hover.</div>
+      </div>
+      <div class="mt-6 flex -space-x-3">
+        <div class="w-9 h-9 rounded-full bg-indigo-500 border-2 border-[#0A0A0C] cursor-pointer hover:z-10 hover:scale-110 transition-transform"></div>
+        <div class="w-9 h-9 rounded-full bg-purple-500 border-2 border-[#0A0A0C] cursor-pointer hover:z-10 hover:scale-110 transition-transform"></div>
+        <div class="w-9 h-9 rounded-full bg-cyan-500 border-2 border-[#0A0A0C] cursor-pointer hover:z-10 hover:scale-110 transition-transform"></div>
+      </div>
+    </div>
+
+    <!-- Pulse -->
+    <div class="ds-motion-card">
+      <div>
+        <div class="ds-motion-card-title">Pulse Animation <span class="ds-source ds-source-finex" style="margin-left:0.5rem; font-size:9px;">F</span></div>
+        <div class="ds-motion-card-desc">Status dot pulses with 2s cubic-bezier. Used for live indicators.</div>
+      </div>
+      <div class="mt-6 flex items-center gap-3">
+        <div class="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)] animate-pulse"></div>
+        <span class="text-sm text-gray-300 font-sans">System Online</span>
+      </div>
+    </div>
+
+    <!-- Pricing CTA glow -->
+    <div class="ds-motion-card">
+      <div>
+        <div class="ds-motion-card-title">CTA Shadow Glow <span class="ds-source ds-source-finex" style="margin-left:0.5rem; font-size:9px;">F</span></div>
+        <div class="ds-motion-card-desc">Button gains intensified box-shadow + scale(1.02) on hover.</div>
+      </div>
+      <div class="mt-6">
+        <button class="hover:bg-blue-500/10 hover:border-blue-400 hover:shadow-[0_0_35px_rgba(59,130,246,0.6),inset_0_0_20px_rgba(59,130,246,0.4)] hover:scale-[1.02] transition-all duration-300 text-sm font-medium text-white bg-black/60 border-blue-500 border rounded-full py-3 px-6 shadow-[0_0_20px_rgba(59,130,246,0.5),inset_0_0_10px_rgba(59,130,246,0.2)]">
+          Hover for Glow
+        </button>
+      </div>
+    </div>
+
+    <!-- Chart bar hover -->
+    <div class="ds-motion-card">
+      <div>
+        <div class="ds-motion-card-title">Chart Bar Hover <span class="ds-source ds-source-finex" style="margin-left:0.5rem; font-size:9px;">F</span></div>
+        <div class="ds-motion-card-desc">bg-white/5 → bg-white/10 transition with tooltip reveal on hover.</div>
+      </div>
+      <div class="mt-6 flex items-end gap-2 h-24">
+        <div class="flex-1 bg-white/5 rounded-t-lg h-[40%] hover:bg-white/10 transition-colors cursor-pointer"></div>
+        <div class="flex-1 bg-white/5 rounded-t-lg h-[60%] hover:bg-white/10 transition-colors cursor-pointer"></div>
+        <div class="flex-1 bg-indigo-500 rounded-t-lg h-[80%] shadow-[0_0_20px_rgba(99,102,241,0.3)] cursor-pointer"></div>
+        <div class="flex-1 bg-white/5 rounded-t-lg h-[50%] hover:bg-white/10 transition-colors cursor-pointer"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 6 — ICONS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="ds-section" id="icons">
+  <div class="ds-section-label">Section 6</div>
+  <div class="ds-section-title">Icons</div>
+  <div class="ds-section-desc">SVG icons used across both designs. Finex uses Lucide-style inline SVGs. Agenciflow uses inline SVG arrows.</div>
+
+  <h3 class="ds-subsection-title"><span class="ds-source ds-source-finex" style="margin-right:0.5rem;">F</span> Finex — Lucide Inline SVGs</h3>
+  <div class="ds-icon-grid">
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+      <div class="ds-icon-label">Wallet</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><rect height="14" rx="2" width="20" x="2" y="5"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+      <div class="ds-icon-label">Credit Card</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <div class="ds-icon-label">Trending Up</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+      <div class="ds-icon-label">Send</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <div class="ds-icon-label">Globe</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><rect height="16" rx="2" width="20" x="2" y="4"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      <div class="ds-icon-label">Mail</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <div class="ds-icon-label">Search</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+      <div class="ds-icon-label">Shield Check</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      <div class="ds-icon-label">Navigation</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      <div class="ds-icon-label">Arrow Right</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="m15 18-6-6 6-6"/></svg>
+      <div class="ds-icon-label">Chevron Left</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="m9 18 6-6-6-6"/></svg>
+      <div class="ds-icon-label">Chevron Right</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <div class="ds-icon-label">Home</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+      <div class="ds-icon-label">Bar Chart</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      <div class="ds-icon-label">Bell</div>
+    </div>
+    <div class="ds-icon-item">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+      <div class="ds-icon-label">Twitter</div>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <h3 class="ds-subsection-title"><span class="ds-source ds-source-agenciflow" style="margin-right:0.5rem;">A</span> Agenciflow — Inline SVG Arrows</h3>
+  <div class="ds-icon-grid">
+    <div class="ds-icon-item">
+      <svg fill="none" viewBox="0 0 24 24" width="24" style="color: white;"><path d="M4.99927 12H18.9993" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M12 5L19 12L12 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+      <div class="ds-icon-label">Button Arrow</div>
+    </div>
+  </div>
+
+  <hr class="ds-divider"/>
+
+  <!-- Icon Sizes -->
+  <h3 class="ds-subsection-title">Icon Size Variants</h3>
+  <div style="display: flex; gap: 2rem; align-items: end;">
+    <div style="text-align: center;">
+      <svg class="text-white" fill="none" height="12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="12"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <div class="ds-icon-label mt-2">12px</div>
+    </div>
+    <div style="text-align: center;">
+      <svg class="text-white" fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="16"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <div class="ds-icon-label mt-2">16px</div>
+    </div>
+    <div style="text-align: center;">
+      <svg class="text-white" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="18"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <div class="ds-icon-label mt-2">18px</div>
+    </div>
+    <div style="text-align: center;">
+      <svg class="text-white" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <div class="ds-icon-label mt-2">20px</div>
+    </div>
+    <div style="text-align: center;">
+      <svg class="text-white" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <div class="ds-icon-label mt-2">24px</div>
+    </div>
+    <div style="text-align: center;">
+      <svg class="text-white" fill="none" height="64" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" viewBox="0 0 24 24" width="64" style="opacity: 0.1;"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <div class="ds-icon-label mt-2">64px (watermark)</div>
+    </div>
+  </div>
+</section>
+
+<!-- Smooth scroll behavior -->
+<script>
+  document.querySelectorAll('.ds-nav a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Scroll-triggered animations for design system sections
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.scroll-item').forEach(el => observer.observe(el));
+
+    // Lucide icons initialization
+    if (window.lucide) lucide.createIcons();
+  });
+</script>
+
+</body>
+</html>

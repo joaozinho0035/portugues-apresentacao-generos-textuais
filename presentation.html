@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gêneros Textuais e Mercado de Trabalho</title>
+
+  <!-- Tailwind (Finex local build) -->
+  <script src="finex-finance-saas.aura.build/assets/176e894661aa9cdc_3.4.17"></script>
+
+  <!-- Google Fonts — same as design-system -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="finex-finance-saas.aura.build/assets/71de0c11c987f278_css2.css" rel="stylesheet">
+  <link href="finex-finance-saas.aura.build/assets/ab7ed01ed5bd637b_css2.css" rel="stylesheet">
+  <link href="finex-finance-saas.aura.build/assets/5a95981dedcc5760_css2.css" rel="stylesheet">
+
+  <style>
+    /* ──────────────────────────────────────────────
+       DESIGN SYSTEM TOKENS (exact from design-system.html)
+       ────────────────────────────────────────────── */
+    .font-oswald  { font-family: 'Oswald', sans-serif !important; }
+    .font-inter   { font-family: 'Inter', sans-serif !important; }
+
+    /* Finex Animations (verbatim) */
+    @keyframes fadeInUp {
+      0%   { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes blurIn {
+      0%   { opacity: 0; filter: blur(15px); transform: scale(0.95); }
+      100% { opacity: 1; filter: blur(0);    transform: scale(1); }
+    }
+
+    /* Presentation-specific keyframes */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(28px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes scaleFade {
+      from { opacity: 0; transform: scale(0.93); filter: blur(6px); }
+      to   { opacity: 1; transform: scale(1);    filter: blur(0); }
+    }
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1; }
+    }
+    @keyframes orb-drift {
+      0%   { transform: translate(0, 0) scale(1); }
+      33%  { transform: translate(30px, -20px) scale(1.05); }
+      66%  { transform: translate(-20px, 15px) scale(0.97); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    /* ──────────────────────────────────────────────
+       BASE RESET
+       ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    ::-webkit-scrollbar { display: none; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050505;
+      color: #fff;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* ──────────────────────────────────────────────
+       PRESENTATION SHELL
+       ────────────────────────────────────────────── */
+    .pres-wrap {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ──────────────────────────────────────────────
+       SLIDES
+       ────────────────────────────────────────────── */
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2.5rem 3rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform: translateY(18px);
+      will-change: opacity, transform;
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+    .slide.leaving-up   { opacity: 0; transform: translateY(-18px); pointer-events: none; }
+    .slide.leaving-down { opacity: 0; transform: translateY(18px);  pointer-events: none; }
+
+    /* Stagger helpers — only fire when inside .active slide */
+    .slide:not(.active) [class*="s-"] {
+      opacity: 0 !important;
+      animation: none !important;
+    }
+    .slide.active .s1 { animation: slideUp  0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.05s both; }
+    .slide.active .s2 { animation: slideUp  0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.17s both; }
+    .slide.active .s3 { animation: slideUp  0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.30s both; }
+    .slide.active .s4 { animation: slideUp  0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.43s both; }
+    .slide.active .s5 { animation: slideUp  0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.56s both; }
+    .slide.active .sl { animation: slideLeft 0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.35s both; }
+    .slide.active .sb { animation: scaleFade 0.75s cubic-bezier(0.25,0.46,0.45,0.94) 0.25s both; }
+
+    /* ──────────────────────────────────────────────
+       CHROME UI
+       ────────────────────────────────────────────── */
+    /* Progress bar */
+    #pbar {
+      position: fixed; top: 0; left: 0; height: 2px; z-index: 200;
+      background: linear-gradient(to right, #6366f1, #3b82f6, #22d3ee);
+      transition: width 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+      box-shadow: 0 0 12px rgba(99,102,241,0.5);
+    }
+
+    /* Nav dots */
+    #nav-dots {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 200;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 3px;
+      background: rgba(255,255,255,0.18);
+      border: none; cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .dot.on { background: #fff; width: 22px; }
+
+    /* Slide counter */
+    #counter {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 200;
+      font-family: 'Inter', monospace; font-size: 10px; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.22);
+    }
+
+    /* Arrow buttons */
+    .arr-btn {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      color: rgba(255,255,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 200;
+      transition: all 0.2s ease;
+    }
+    .arr-btn:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.18); color: #fff; }
+    #prev-btn { left: 1.25rem; }
+    #next-btn { right: 1.25rem; }
+
+    /* Fullscreen btn */
+    #fs-btn {
+      position: fixed; top: 1.25rem; left: 1.25rem;
+      width: 34px; height: 34px; border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.35);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 200;
+      transition: all 0.2s ease;
+    }
+    #fs-btn:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.7); }
+
+    /* Key hint */
+    #key-hint {
+      position: fixed; top: 1.5rem; right: 1.5rem; z-index: 200;
+      font-size: 10px; letter-spacing: 0.1em; color: rgba(255,255,255,0.18);
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ──────────────────────────────────────────────
+       SHARED VISUAL UTILITIES (from design-system)
+       ────────────────────────────────────────────── */
+    .dot-grid {
+      background-image: radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px);
+      background-size: 38px 38px;
+    }
+    .card-base {
+      background: #0A0A0C;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: border-color 0.2s ease;
+    }
+    .card-base:hover { border-color: rgba(255,255,255,0.2); }
+    .icon-box {
+      background: #1A1A1A;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 0.75rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    /* Orb background animation */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orb-drift 12s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* Section number badge (exact from design-system) */
+    .section-badge {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 500; color: #60a5fa; font-family: monospace;
+      background: rgba(59,130,246,0.1);
+      width: 28px; height: 28px;
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 0.5rem;
+      box-shadow: 0 0 10px rgba(59,130,246,0.2);
+      flex-shrink: 0;
+    }
+
+    /* Live indicator dot (from design-system) */
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34,197,94,0.8);
+      animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .slide, .dot, #pbar { transition: none; }
+      .slide.active [class*="s-"],
+      .slide.active .sl,
+      .slide.active .sb { animation: none; opacity: 1; }
+    }
+
+    /* Responsive scale for very small screens */
+    @media (max-width: 640px) {
+      .slide { padding: 1.5rem; }
+      .hide-sm { display: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ─── Chrome UI ─────────────────────────── -->
+  <div id="pbar" style="width: 20%;"></div>
+
+  <button id="fs-btn" title="Fullscreen (F)">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+      <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+    </svg>
+  </button>
+
+  <div id="key-hint">← → SPACE · ESC · F</div>
+
+  <button class="arr-btn" id="prev-btn" aria-label="Slide anterior">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+  </button>
+  <button class="arr-btn" id="next-btn" aria-label="Próximo slide">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+  </button>
+
+  <div id="nav-dots"></div>
+  <div id="counter">01 / 06</div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDES WRAPPER
+       ═══════════════════════════════════════════════════════ -->
+  <div class="pres-wrap" id="pres">
+
+    <!-- ══════════════════════════════════════════
+         SLIDE 01 — HERO OPENING
+         ══════════════════════════════════════════ -->
+    <section class="slide active" data-slide="0">
+      <!-- Layers -->
+      <div class="absolute inset-0 dot-grid"></div>
+      <div class="orb" style="width:600px;height:600px;background:rgba(99,102,241,0.10);top:-10%;left:30%;animation-duration:14s;"></div>
+      <div class="orb" style="width:400px;height:400px;background:rgba(59,130,246,0.07);bottom:0;right:10%;animation-duration:18s;animation-delay:-6s;"></div>
+
+      <div class="relative z-10 text-center" style="max-width: 900px;">
+        <!-- Badge (Finex pattern) -->
+        <div class="s1 flex items-center justify-center gap-3 mb-10">
+          <span class="section-badge">PT</span>
+          <span class="uppercase text-xs font-medium tracking-widest font-inter" style="color:rgba(255,255,255,0.35);">Português · Ensino Médio · 2025</span>
+        </div>
+
+        <!-- Giant title -->
+        <h1 class="s2 font-oswald font-light tracking-tight text-white"
+            style="font-size: clamp(3.2rem, 8.5vw, 8rem); line-height: 1.0; letter-spacing: -0.02em;">
+          Gêneros Textuais
+        </h1>
+        <h2 class="s3 font-oswald font-light tracking-tight"
+            style="font-size: clamp(3.2rem, 8.5vw, 8rem); line-height: 1.0; letter-spacing: -0.02em; color: #374151;">
+          e Mercado de Trabalho
+        </h2>
+
+        <!-- Divider line -->
+        <div class="s4 mx-auto mt-10 mb-10" style="width:48px;height:1px;background:rgba(255,255,255,0.12);"></div>
+
+        <!-- Subtitle -->
+        <p class="s4 text-lg font-light leading-relaxed font-inter" style="color: rgba(255,255,255,0.35); max-width: 480px; margin: 0 auto;">
+          Como a comunicação influencia profissões e oportunidades
+        </p>
+
+        <!-- Hint -->
+        <div class="s5 flex items-center justify-center gap-2.5 mt-12">
+          <span class="live-dot"></span>
+          <span class="text-xs uppercase tracking-widest font-inter" style="color: rgba(255,255,255,0.22);">Pressione → para começar</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         SLIDE 02 — O QUE SÃO GÊNEROS TEXTUAIS
+         ══════════════════════════════════════════ -->
+    <section class="slide" data-slide="1">
+      <div class="absolute inset-0 dot-grid" style="opacity:0.45;"></div>
+      <div class="orb" style="width:500px;height:500px;background:rgba(99,102,241,0.09);top:20%;left:-5%;animation-duration:16s;"></div>
+
+      <div class="relative z-10 w-full" style="max-width: 1100px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+
+          <!-- LEFT: concept -->
+          <div>
+            <div class="s1 flex items-center gap-3 mb-8">
+              <span class="section-badge">02</span>
+              <span class="uppercase text-xs font-medium tracking-widest font-inter" style="color: rgba(255,255,255,0.35);">Conceito</span>
+            </div>
+
+            <h2 class="s2 font-oswald font-light tracking-tight text-white mb-6"
+                style="font-size: clamp(2.2rem, 4.5vw, 3.8rem); line-height: 1.1;">
+              O que são<br>
+              <span style="color: #374151;">gêneros textuais?</span>
+            </h2>
+
+            <p class="s3 text-lg font-light leading-relaxed font-inter mb-8" style="color: rgba(255,255,255,0.45); max-width: 400px;">
+              Formas de comunicação moldadas para cada contexto. No trabalho, usar o gênero certo transmite
+              <span style="color: rgba(255,255,255,0.85); font-weight: 500;">profissionalismo e clareza.</span>
+            </p>
+
+            <!-- Insight card (Finex feature card pattern) -->
+            <div class="s4 rounded-2xl card-base p-5 flex items-start gap-4" style="max-width: 400px; position: relative; overflow: hidden;">
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at top, rgba(26,26,46,0.8), transparent 60%);z-index:0;"></div>
+              <div class="icon-box w-10 h-10 shrink-0" style="position:relative;z-index:1;">
+                <svg class="text-indigo-400" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <p class="text-sm font-light font-inter" style="color: rgba(255,255,255,0.5); line-height: 1.6; position:relative;z-index:1;">
+                Cada situação exige um tipo de linguagem. Saber escolher o certo é um diferencial profissional.
+              </p>
+            </div>
+          </div>
+
+          <!-- RIGHT: genre list -->
+          <div class="sb" style="display: flex; flex-direction: column; gap: 10px;">
+
+            <!-- Row helper macro -->
+            <!-- Email -->
+            <div class="card-base rounded-xl flex items-center gap-4 p-4 group" style="cursor: default;">
+              <div class="icon-box w-10 h-10 group-hover:border-indigo-500/40" style="transition: border-color 0.2s;">
+                <svg style="color: rgba(255,255,255,0.4);" class="group-hover:text-indigo-400" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect height="16" rx="2" width="20" x="2" y="4"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div class="text-sm font-medium text-white font-inter">Email</div>
+                <div class="text-xs font-inter mt-0.5" style="color:rgba(255,255,255,0.28);">Comunicação profissional</div>
+              </div>
+              <span class="text-xs font-medium font-inter px-2.5 py-0.5 rounded-full" style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#818cf8;">Formal</span>
+            </div>
+
+            <!-- Currículo -->
+            <div class="card-base rounded-xl flex items-center gap-4 p-4 group" style="cursor: default;">
+              <div class="icon-box w-10 h-10 group-hover:border-blue-500/40" style="transition: border-color 0.2s;">
+                <svg style="color: rgba(255,255,255,0.4);" class="group-hover:text-blue-400" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div class="text-sm font-medium text-white font-inter">Currículo</div>
+                <div class="text-xs font-inter mt-0.5" style="color:rgba(255,255,255,0.28);">Apresentação profissional</div>
+              </div>
+              <span class="text-xs font-medium font-inter px-2.5 py-0.5 rounded-full" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.25);color:#60a5fa;">Pessoal</span>
+            </div>
+
+            <!-- Relatório -->
+            <div class="card-base rounded-xl flex items-center gap-4 p-4 group" style="cursor: default;">
+              <div class="icon-box w-10 h-10 group-hover:border-purple-500/40" style="transition: border-color 0.2s;">
+                <svg style="color: rgba(255,255,255,0.4);" class="group-hover:text-purple-400" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div class="text-sm font-medium text-white font-inter">Relatório</div>
+                <div class="text-xs font-inter mt-0.5" style="color:rgba(255,255,255,0.28);">Informar resultados</div>
+              </div>
+              <span class="text-xs font-medium font-inter px-2.5 py-0.5 rounded-full" style="background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25);color:#c084fc;">Técnico</span>
+            </div>
+
+            <!-- Mensagem -->
+            <div class="card-base rounded-xl flex items-center gap-4 p-4 group" style="cursor: default;">
+              <div class="icon-box w-10 h-10 group-hover:border-cyan-500/40" style="transition: border-color 0.2s;">
+                <svg style="color: rgba(255,255,255,0.4);" class="group-hover:text-cyan-400" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div class="text-sm font-medium text-white font-inter">Mensagem</div>
+                <div class="text-xs font-inter mt-0.5" style="color:rgba(255,255,255,0.28);">Comunicação rápida</div>
+              </div>
+              <span class="text-xs font-medium font-inter px-2.5 py-0.5 rounded-full" style="background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.22);color:#22d3ee;">Informal</span>
+            </div>
+
+            <!-- Artigo -->
+            <div class="card-base rounded-xl flex items-center gap-4 p-4 group" style="cursor: default;">
+              <div class="icon-box w-10 h-10 group-hover:border-emerald-500/40" style="transition: border-color 0.2s;">
+                <svg style="color: rgba(255,255,255,0.4);" class="group-hover:text-emerald-400" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div class="text-sm font-medium text-white font-inter">Artigo</div>
+                <div class="text-xs font-inter mt-0.5" style="color:rgba(255,255,255,0.28);">Informar e argumentar</div>
+              </div>
+              <span class="text-xs font-medium font-inter px-2.5 py-0.5 rounded-full" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.22);color:#34d399;">Analítico</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         SLIDE 03 — MERCADO DE TRABALHO
+         ══════════════════════════════════════════ -->
+    <section class="slide" data-slide="2">
+      <div class="absolute inset-0 dot-grid" style="opacity:0.35;"></div>
+      <div class="orb" style="width:700px;height:300px;background:rgba(59,130,246,0.07);bottom:-5%;left:10%;animation-duration:20s;"></div>
+
+      <div class="relative z-10 w-full" style="max-width: 1100px;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+          <div class="s1 flex items-center justify-center gap-3 mb-5">
+            <span class="section-badge">03</span>
+            <span class="uppercase text-xs font-medium tracking-widest font-inter" style="color: rgba(255,255,255,0.35);">Mercado de Trabalho</span>
+          </div>
+          <h2 class="s2 font-oswald font-light tracking-tight text-white"
+              style="font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -0.02em;">
+            Gêneros textuais em cada profissão
+          </h2>
+        </div>
+
+        <!-- Profession grid (5 cards — Finex stat card pattern adapted) -->
+        <div class="s3" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.75rem;">
+
+          <!-- Advogado -->
+          <div class="card-base rounded-2xl p-5 text-center group" style="cursor:default; position:relative; overflow:hidden;">
+            <div style="position:absolute;inset:0;background:radial-gradient(ellipse at top, rgba(26,26,46,0.9), transparent 60%);"></div>
+            <div class="relative z-10">
+              <div class="mx-auto mb-4 rounded-xl flex items-center justify-center" style="width:48px;height:48px;background:linear-gradient(135deg,#4f46e5,#4338ca);box-shadow:0 4px 20px rgba(79,70,229,0.3);">
+                <svg class="text-white" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+              </div>
+              <div class="text-sm font-semibold text-white mb-1.5 font-inter">Advogado</div>
+              <div class="text-xs font-inter" style="color:rgba(255,255,255,0.3);">Petições</div>
+            </div>
+          </div>
+
+          <!-- Jornalista -->
+          <div class="card-base rounded-2xl p-5 text-center group" style="cursor:default; position:relative; overflow:hidden;">
+            <div style="position:absolute;inset:0;background:radial-gradient(ellipse at top, rgba(26,26,46,0.9), transparent 60%);"></div>
+            <div class="relative z-10">
+              <div class="mx-auto mb-4 rounded-xl flex items-center justify-center" style="width:48px;height:48px;background:linear-gradient(135deg,#3b82f6,#6366f1);box-shadow:0 4px 20px rgba(59,130,246,0.3);">
+                <svg class="text-white" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <div class="text-sm font-semibold text-white mb-1.5 font-inter">Jornalista</div>
+              <div class="text-xs font-inter" style="color:rgba(255,255,255,0.3);">Notícias</div>
+            </div>
+          </div>
+
+          <!-- Programador -->
+          <div class="card-base rounded-2xl p-5 text-center group" style="cursor:default; position:relative; overflow:hidden;">
+            <div style="position:absolute;inset:0;background:radial-gradient(ellipse at top, rgba(26,26,46,0.9), transparent 60%);"></div>
+            <div class="relative z-10">
+              <div class="mx-auto mb-4 rounded-xl flex items-center justify-center" style="width:48px;height:48px;background:linear-gradient(135deg,#06b6d4,#3b82f6);box-shadow:0 4px 20px rgba(6,182,212,0.3);">
+                <svg class="text-white" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              </div>
+              <div class="text-sm font-semibold text-white mb-1.5 font-inter">Programador</div>
+              <div class="text-xs font-inter" style="color:rgba(255,255,255,0.3);">Documentação</div>
+            </div>
+          </div>
+
+          <!-- RH -->
+          <div class="card-base rounded-2xl p-5 text-center group" style="cursor:default; position:relative; overflow:hidden;">
+            <div style="position:absolute;inset:0;background:radial-gradient(ellipse at top, rgba(26,26,46,0.9), transparent 60%);"></div>
+            <div class="relative z-10">
+              <div class="mx-auto mb-4 rounded-xl flex items-center justify-center" style="width:48px;height:48px;background:linear-gradient(135deg,#a855f7,#6366f1);box-shadow:0 4px 20px rgba(168,85,247,0.3);">
+                <svg class="text-white" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div class="text-sm font-semibold text-white mb-1.5 font-inter">RH</div>
+              <div class="text-xs font-inter" style="color:rgba(255,255,255,0.3);">Emails e currículos</div>
+            </div>
+          </div>
+
+          <!-- Marketing -->
+          <div class="card-base rounded-2xl p-5 text-center group" style="cursor:default; position:relative; overflow:hidden;">
+            <div style="position:absolute;inset:0;background:radial-gradient(ellipse at top, rgba(26,26,46,0.9), transparent 60%);"></div>
+            <div class="relative z-10">
+              <div class="mx-auto mb-4 rounded-xl flex items-center justify-center" style="width:48px;height:48px;background:linear-gradient(135deg,#a855f7,#ec4899);box-shadow:0 4px 20px rgba(236,72,153,0.3);">
+                <svg class="text-white" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+              </div>
+              <div class="text-sm font-semibold text-white mb-1.5 font-inter">Marketing</div>
+              <div class="text-xs font-inter" style="color:rgba(255,255,255,0.3);">Publicidade</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insight strip (3 col — Finex pattern) -->
+        <div class="s4" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+          <div style="padding:1rem 1.25rem; border-radius:0.875rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); display:flex; align-items:flex-start; gap:0.75rem;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;margin-top:6px;flex-shrink:0;"></div>
+            <p class="text-sm font-inter font-light" style="color:rgba(255,255,255,0.45);">Empresas valorizam <span style="color:rgba(255,255,255,0.8);">comunicação clara</span></p>
+          </div>
+          <div style="padding:1rem 1.25rem; border-radius:0.875rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); display:flex; align-items:flex-start; gap:0.75rem;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#3b82f6;margin-top:6px;flex-shrink:0;"></div>
+            <p class="text-sm font-inter font-light" style="color:rgba(255,255,255,0.45);">Erros de escrita <span style="color:rgba(255,255,255,0.8);">fecham portas</span></p>
+          </div>
+          <div style="padding:1rem 1.25rem; border-radius:0.875rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); display:flex; align-items:flex-start; gap:0.75rem;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#a855f7;margin-top:6px;flex-shrink:0;"></div>
+            <p class="text-sm font-inter font-light" style="color:rgba(255,255,255,0.45);">Clareza melhora o <span style="color:rgba(255,255,255,0.8);">trabalho em equipe</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         SLIDE 04 — IMPACTO PROFISSIONAL
+         ══════════════════════════════════════════ -->
+    <section class="slide" data-slide="3">
+      <div class="absolute inset-0 dot-grid" style="opacity:0.38;"></div>
+      <div class="orb" style="width:550px;height:550px;background:rgba(99,102,241,0.11);top:10%;right:-5%;animation-duration:17s;animation-delay:-3s;"></div>
+
+      <div class="relative z-10 w-full" style="max-width: 1100px; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;">
+
+        <!-- LEFT: statement -->
+        <div>
+          <div class="s1 flex items-center gap-3 mb-10">
+            <span class="section-badge">04</span>
+            <span class="uppercase text-xs font-medium tracking-widest font-inter" style="color:rgba(255,255,255,0.35);">Impacto</span>
+          </div>
+
+          <!-- Big quote (Finex blockquote pattern) -->
+          <blockquote class="s2 font-oswald font-light text-white leading-tight mb-7"
+                      style="font-size: clamp(1.8rem, 3.8vw, 3rem); letter-spacing: -0.01em;">
+            "A comunicação<br>
+            <span style="color: #374151;">pode abrir ou</span><br>
+            fechar portas."
+          </blockquote>
+
+          <p class="s3 text-base font-light leading-relaxed font-inter" style="color:rgba(255,255,255,0.4); max-width: 380px;">
+            Muitas pessoas acreditam que Português serve apenas para provas escolares. Na realidade, ele está em
+            <span style="color:rgba(255,255,255,0.75);">praticamente todas as profissões.</span>
+          </p>
+        </div>
+
+        <!-- RIGHT: 4 impact cards (Finex feature card) -->
+        <div class="sb" style="display:flex; flex-direction:column; gap:10px;">
+
+          <div class="card-base rounded-2xl flex items-center gap-4 p-4 group" style="cursor:default; position:relative; overflow:hidden;">
+            <div style="position:absolute;inset:0;background:rgba(255,255,255,0.015);opacity:0;transition:opacity 0.2s;" class="group-hover:opacity-100"></div>
+            <div class="icon-box w-10 h-10 relative z-10 group-hover:border-indigo-500/40" style="transition:border-color 0.2s;">
+              <svg style="color:rgba(99,102,241,0.8);" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="relative z-10">
+              <div class="text-sm font-medium text-white font-inter">Boa escrita</div>
+              <div class="text-xs font-inter mt-0.5" style="color:rgba(255,255,255,0.3);">Transmite profissionalismo</div>
+            </div>
+          </div>
+
+          <div class="card-base rounded-2xl flex items-center gap-4 p-4 group" style="cursor:default; position:relative; overflow:hidden;">
+            <div class="icon-box w-10 h-10 relative z-10 group-hover:border-blue-500/40" style="transition:border-color 0.2s;">
+              <svg style="color:rgba(59,130,246,0.8);" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="relative z-10">
+              <div class="text-sm font-medium text-white font-inter">Comunicação em entrevistas</div>
+              <div class="text-xs font-inter mt-0.5" style="color:rgba(255,255,255,0.3);">Primeira impressão é decisiva</div>
+            </div>
+          </div>
+
+          <div class="card-base rounded-2xl flex items-center gap-4 p-4 group" style="cursor:default; position:relative; overflow:hidden;">
+            <div class="icon-box w-10 h-10 relative z-10 group-hover:border-purple-500/40" style="transition:border-color 0.2s;">
+              <svg style="color:rgba(168,85,247,0.8);" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            </div>
+            <div class="relative z-10">
+              <div class="text-sm font-medium text-white font-inter">Redes sociais = gêneros textuais</div>
+              <div class="text-xs font-inter mt-0.5" style="color:rgba(255,255,255,0.3);">Presente na vida digital</div>
+            </div>
+          </div>
+
+          <div class="card-base rounded-2xl flex items-center gap-4 p-4 group" style="cursor:default; position:relative; overflow:hidden;">
+            <div class="icon-box w-10 h-10 relative z-10 group-hover:border-emerald-500/40" style="transition:border-color 0.2s;">
+              <svg style="color:rgba(16,185,129,0.8);" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="relative z-10">
+              <div class="text-sm font-medium text-white font-inter">Português em todas as carreiras</div>
+              <div class="text-xs font-inter mt-0.5" style="color:rgba(255,255,255,0.3);">Não é só para provas escolares</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         SLIDE 05 — EXEMPLOS NA PRÁTICA
+         ══════════════════════════════════════════ -->
+    <section class="slide" data-slide="4">
+      <div class="absolute inset-0 dot-grid" style="opacity:0.4;"></div>
+      <div class="orb" style="width:500px;height:500px;background:rgba(168,85,247,0.08);top:-10%;right:5%;animation-duration:18s;"></div>
+      <div class="orb" style="width:350px;height:350px;background:rgba(59,130,246,0.07);bottom:10%;left:-5%;animation-duration:22s;animation-delay:-5s;"></div>
+
+      <div class="relative z-10 w-full" style="max-width: 1100px;">
+
+        <!-- Header -->
+        <div class="s1 flex items-center gap-3 mb-5">
+          <span class="section-badge">05</span>
+          <span class="uppercase text-xs font-medium tracking-widest font-inter" style="color: rgba(255,255,255,0.35);">Exemplos na Prática</span>
+        </div>
+
+        <h2 class="s2 font-oswald font-light tracking-tight text-white mb-6"
+            style="font-size: clamp(1.6rem, 3.2vw, 2.6rem); letter-spacing: -0.02em;">
+          Como cada profissão se comunica
+        </h2>
+
+        <!-- Row 1: 3 document cards -->
+        <div class="s3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+
+          <!-- Email Profissional -->
+          <div class="card-base rounded-xl overflow-hidden">
+            <div style="padding: 9px 13px; background: rgba(99,102,241,0.14); border-bottom: 1px solid rgba(99,102,241,0.22); display:flex; align-items:center; gap:7px;">
+              <div style="width:7px;height:7px;border-radius:50%;background:#6366f1;box-shadow:0 0 8px rgba(99,102,241,0.7);flex-shrink:0;"></div>
+              <span class="font-inter text-xs font-medium" style="color:#818cf8;">Email Profissional</span>
+              <span class="font-inter text-xs font-light ml-auto" style="color:rgba(255,255,255,0.2);">RH · Advogado</span>
+            </div>
+            <div style="padding:12px 13px 14px;">
+              <div class="font-inter text-xs font-medium mb-1.5" style="color:rgba(255,255,255,0.65);">Assunto: Solicitação de Documentos — Proc. nº 2025.041</div>
+              <div style="height:1px;background:rgba(255,255,255,0.06);margin: 7px 0;"></div>
+              <p class="font-inter font-light" style="font-size:10.5px;color:rgba(255,255,255,0.36);line-height:1.75;">
+                Prezado Sr. Costa,<br><br>
+                Venho, por meio desta, solicitar gentilmente o envio dos documentos referentes ao contrato acima, <span style="color:rgba(255,255,255,0.58);">no prazo de 5 dias úteis.</span><br><br>
+                Atenciosamente,<br>
+                <span style="color:rgba(255,255,255,0.5);">Dra. Ana Paula Ferreira — OAB/SP 123.456</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Petição Jurídica -->
+          <div class="card-base rounded-xl overflow-hidden">
+            <div style="padding: 9px 13px; background: rgba(79,70,229,0.14); border-bottom: 1px solid rgba(79,70,229,0.22); display:flex; align-items:center; gap:7px;">
+              <div style="width:7px;height:7px;border-radius:50%;background:#4f46e5;box-shadow:0 0 8px rgba(79,70,229,0.7);flex-shrink:0;"></div>
+              <span class="font-inter text-xs font-medium" style="color:#a5b4fc;">Petição Jurídica</span>
+              <span class="font-inter text-xs font-light ml-auto" style="color:rgba(255,255,255,0.2);">Advogado</span>
+            </div>
+            <div style="padding:12px 13px 14px;">
+              <div class="font-inter text-xs font-medium mb-1.5" style="color:rgba(255,255,255,0.65);">Ação de Indenização — 3ª Vara Cível</div>
+              <div style="height:1px;background:rgba(255,255,255,0.06);margin: 7px 0;"></div>
+              <p class="font-inter font-light" style="font-size:10.5px;color:rgba(255,255,255,0.36);line-height:1.75;">
+                <span style="color:rgba(255,255,255,0.6);font-weight:500;letter-spacing:0.02em;">EXMO. SR. DR. JUIZ DE DIREITO</span><br>
+                da 3ª Vara Cível da Comarca de São Paulo.<br><br>
+                João da Silva, brasileiro, maior e capaz, vem, respeitosamente, à presença de <span style="color:rgba(255,255,255,0.52);">Vossa Excelência, expor e requerer...</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Artigo de Opinião -->
+          <div class="card-base rounded-xl overflow-hidden">
+            <div style="padding: 9px 13px; background: rgba(16,185,129,0.11); border-bottom: 1px solid rgba(16,185,129,0.2); display:flex; align-items:center; gap:7px;">
+              <div style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px rgba(16,185,129,0.7);flex-shrink:0;"></div>
+              <span class="font-inter text-xs font-medium" style="color:#34d399;">Artigo de Opinião</span>
+              <span class="font-inter text-xs font-light ml-auto" style="color:rgba(255,255,255,0.2);">Jornalismo</span>
+            </div>
+            <div style="padding:12px 13px 14px;">
+              <div class="font-inter text-xs font-medium mb-1.5" style="color:rgba(255,255,255,0.65);">Por que a comunicação define carreiras?</div>
+              <div style="height:1px;background:rgba(255,255,255,0.06);margin: 7px 0;"></div>
+              <p class="font-inter font-light" style="font-size:10.5px;color:rgba(255,255,255,0.36);line-height:1.75;">
+                Estudos indicam que profissionais com <span style="color:rgba(255,255,255,0.58);">boa comunicação escrita</span> têm até 40% mais chances de promoção. A escrita clara e objetiva — seja em emails ou relatórios — tornou-se um diferencial competitivo inegável...
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Row 2: 2 document cards -->
+        <div class="s4" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+
+          <!-- Notícia Jornalística -->
+          <div class="card-base rounded-xl overflow-hidden">
+            <div style="padding: 9px 13px; background: rgba(59,130,246,0.11); border-bottom: 1px solid rgba(59,130,246,0.2); display:flex; align-items:center; gap:7px;">
+              <div style="width:7px;height:7px;border-radius:50%;background:#3b82f6;box-shadow:0 0 8px rgba(59,130,246,0.7);flex-shrink:0;"></div>
+              <span class="font-inter text-xs font-medium" style="color:#60a5fa;">Notícia Jornalística</span>
+              <span class="font-inter text-xs font-light ml-auto" style="color:rgba(255,255,255,0.2);">Jornalista</span>
+            </div>
+            <div style="padding:11px 13px 13px;">
+              <div class="font-inter text-xs font-medium mb-1.5" style="color:rgba(255,255,255,0.65);">Mercado valoriza profissionais com boa escrita</div>
+              <div style="height:1px;background:rgba(255,255,255,0.06);margin: 6px 0;"></div>
+              <p class="font-inter font-light" style="font-size:10.5px;color:rgba(255,255,255,0.36);line-height:1.7;">
+                <span style="color:rgba(255,255,255,0.42);">São Paulo, 26 mai. 2025 —</span> Pesquisa aponta que 78% dos recrutadores rejeitam currículos com erros de português, mesmo quando o candidato possui as qualificações técnicas exigidas pelo cargo...
+              </p>
+            </div>
+          </div>
+
+          <!-- Relatório Técnico -->
+          <div class="card-base rounded-xl overflow-hidden">
+            <div style="padding: 9px 13px; background: rgba(168,85,247,0.11); border-bottom: 1px solid rgba(168,85,247,0.2); display:flex; align-items:center; gap:7px;">
+              <div style="width:7px;height:7px;border-radius:50%;background:#a855f7;box-shadow:0 0 8px rgba(168,85,247,0.7);flex-shrink:0;"></div>
+              <span class="font-inter text-xs font-medium" style="color:#c084fc;">Relatório Técnico</span>
+              <span class="font-inter text-xs font-light ml-auto" style="color:rgba(255,255,255,0.2);">Empresas · TI</span>
+            </div>
+            <div style="padding:11px 13px 13px;">
+              <div class="font-inter text-xs font-medium mb-1.5" style="color:rgba(255,255,255,0.65);">Relatório de Desempenho — Mai/2025</div>
+              <div style="height:1px;background:rgba(255,255,255,0.06);margin: 6px 0;"></div>
+              <p class="font-inter font-light" style="font-size:10.5px;color:rgba(255,255,255,0.36);line-height:1.7;">
+                <span style="color:rgba(255,255,255,0.52);">Equipe:</span> Marketing Digital<br>
+                Taxa de conversão: <span style="color:rgba(255,255,255,0.62);font-weight:500;">↑ 23%</span> vs. período anterior.<br>
+                Principais ações: campanhas de email marketing e produção de conteúdo editorial com foco em SEO.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         SLIDE 06 — CONCLUSÃO
+         ══════════════════════════════════════════ -->
+    <section class="slide" data-slide="5">
+      <div class="absolute inset-0 dot-grid"></div>
+      <div class="orb" style="width:700px;height:700px;background:rgba(99,102,241,0.12);top:-20%;left:20%;animation-duration:15s;"></div>
+      <div class="orb" style="width:400px;height:400px;background:rgba(59,130,246,0.07);bottom:5%;right:5%;animation-duration:19s;animation-delay:-8s;"></div>
+
+      <div class="relative z-10 text-center" style="max-width: 880px;">
+        <!-- Badge -->
+        <div class="s1 flex items-center justify-center gap-3 mb-10">
+          <span class="section-badge">06</span>
+          <span class="uppercase text-xs font-medium tracking-widest font-inter" style="color: rgba(255,255,255,0.35);">Conclusão</span>
+        </div>
+
+        <!-- Massive statement -->
+        <div class="s2">
+          <div class="font-oswald font-light tracking-tight text-white"
+               style="font-size: clamp(3.8rem, 10vw, 9rem); line-height: 0.95; letter-spacing: -0.02em;">
+            Comunicação
+          </div>
+          <div class="font-oswald font-light tracking-tight"
+               style="font-size: clamp(3.8rem, 10vw, 9rem); line-height: 0.95; letter-spacing: -0.02em; color: #374151;">
+            é poder.
+          </div>
+        </div>
+
+        <!-- Thin divider -->
+        <div class="mx-auto mt-10 mb-8" style="width: 40px; height: 1px; background: rgba(255,255,255,0.1);"></div>
+
+        <!-- Tag cloud (Finex badge pattern) -->
+        <div class="s3 flex flex-wrap items-center justify-center gap-2.5 mb-10" style="max-width: 700px; margin-left:auto; margin-right:auto;">
+          <span class="text-sm font-light font-inter px-4 py-2 rounded-full" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.5);">Gêneros textuais estão em todo lugar</span>
+          <span class="text-sm font-light font-inter px-4 py-2 rounded-full" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.5);">Mercado exige boa comunicação</span>
+          <span class="text-sm font-light font-inter px-4 py-2 rounded-full" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.5);">Escrever bem gera oportunidades</span>
+          <span class="text-sm font-medium font-inter px-4 py-2 rounded-full" style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#a5b4fc;">Português é uma ferramenta profissional</span>
+        </div>
+
+        <!-- Closing quote -->
+        <p class="s4 text-base font-light leading-relaxed font-inter" style="color:rgba(255,255,255,0.32); max-width: 520px; margin:0 auto;">
+          "Independentemente da profissão que escolhermos, a comunicação sempre será uma das habilidades mais importantes para crescer profissionalmente."
+        </p>
+
+        <!-- Final live indicator -->
+        <div class="s5 flex items-center justify-center gap-2.5 mt-10">
+          <span class="live-dot"></span>
+          <span class="text-xs uppercase tracking-widest font-inter" style="color: rgba(255,255,255,0.2);">Apresentação concluída</span>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.pres-wrap -->
+
+
+  <!-- ─── Presentation Engine ─────────────────────── -->
+  <script>
+    (function () {
+      const slides      = Array.from(document.querySelectorAll('.slide'));
+      const totalSlides = slides.length;
+      let   current     = 0;
+      let   animating   = false;
+
+      const pbar    = document.getElementById('pbar');
+      const counter = document.getElementById('counter');
+      const dotsEl  = document.getElementById('nav-dots');
+
+      /* Build nav dots */
+      slides.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'dot' + (i === 0 ? ' on' : '');
+        d.setAttribute('aria-label', 'Slide ' + (i + 1));
+        d.addEventListener('click', () => goTo(i));
+        dotsEl.appendChild(d);
+      });
+
+      function updateChrome() {
+        const pct = ((current + 1) / totalSlides) * 100;
+        pbar.style.width = pct + '%';
+        counter.textContent =
+          String(current + 1).padStart(2, '0') + ' / ' +
+          String(totalSlides).padStart(2, '0');
+        document.querySelectorAll('.dot').forEach((d, i) => {
+          d.classList.toggle('on', i === current);
+        });
+      }
+
+      function goTo(index, dir) {
+        if (animating || index === current || index < 0 || index >= totalSlides) return;
+        animating = true;
+
+        const prev = slides[current];
+        const next = slides[index];
+        const goingForward = index > current;
+
+        /* Exit current */
+        prev.classList.remove('active');
+        prev.classList.add(goingForward ? 'leaving-up' : 'leaving-down');
+
+        /* Enter next after a small offset so transitions don't collide */
+        setTimeout(() => {
+          prev.classList.remove('leaving-up', 'leaving-down');
+          current = index;
+          next.classList.add('active');
+          updateChrome();
+          setTimeout(() => { animating = false; }, 600);
+        }, 50);
+      }
+
+      function next() { goTo(current + 1, 1); }
+      function prev() { goTo(current - 1, -1); }
+
+      /* Keyboard */
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+          e.preventDefault(); next();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault(); prev();
+        } else if (e.key === 'Escape') {
+          document.fullscreenElement && document.exitFullscreen();
+        } else if (e.key.toLowerCase() === 'f') {
+          toggleFS();
+        }
+      });
+
+      document.getElementById('prev-btn').addEventListener('click', prev);
+      document.getElementById('next-btn').addEventListener('click', next);
+
+      /* Fullscreen */
+      function toggleFS() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen();
+        }
+      }
+      document.getElementById('fs-btn').addEventListener('click', toggleFS);
+
+      /* Touch / swipe */
+      let tx = 0;
+      document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+      document.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - tx;
+        if (Math.abs(dx) > 48) dx < 0 ? next() : prev();
+      }, { passive: true });
+
+      /* Mouse wheel (debounced) */
+      let wheelLock = false;
+      document.addEventListener('wheel', e => {
+        if (wheelLock) return;
+        wheelLock = true;
+        e.deltaY > 0 ? next() : prev();
+        setTimeout(() => { wheelLock = false; }, 900);
+      }, { passive: true });
+
+      /* Init */
+      updateChrome();
+    })();
+  </script>
+</body>
+</html>

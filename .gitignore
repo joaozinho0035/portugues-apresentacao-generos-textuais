@@ -1,0 +1,7 @@
+# Ignorar pasta webflow não usada
+agenciflow-studio.webflow.io (2)/
+
+# Ignorar arquivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
